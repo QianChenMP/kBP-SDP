@@ -1,0 +1,36 @@
+clc;
+clear;
+
+d=4;
+alpha=-0.4;
+randmat=randi(d*d,d*d);
+X=eye(d*d)+alpha*MaxEntangled(d,0,0)*MaxEntangled(d,0,0)';
+X3=kron(X,eye(d*d));
+
+X3rec=kron([1 0;0 0],X3);
+X3to=kron([1 0 0;0 0 0; 0 0 0],X3);
+
+perm0rec=kron([1 0;0 1],PermutationOperator(d,[1,2,3,4]));
+perm23rec=kron([1/2 sqrt(3)/2;sqrt(3)/2 -1/2],PermutationOperator(d,[1,3,2,4]));
+perm34rec=kron([-1 0;0 1],PermutationOperator(d,[1,2,4,3]));
+perm24rec=kron([1/2 -sqrt(3)/2;-sqrt(3)/2 -1/2],PermutationOperator(d,[1,4,3,2]));
+perm234rec=kron([-1/2 sqrt(3)/2;-sqrt(3)/2 -1/2],PermutationOperator(d,[1,4,2,3]));
+perm243rec=kron([-1/2 -sqrt(3)/2;sqrt(3)/2 -1/2],PermutationOperator(d,[1,3,4,2]));
+
+perm0to=kron([1 0 0; 0 1 0; 0 0 1],PermutationOperator(d,[1,2,3,4]));
+perm23to=kron([1/2 sqrt(3)/2 0;sqrt(3)/2 -1/2 0; 0 0 1],PermutationOperator(d,[1,3,2,4]));
+perm34to=kron([1 0 0; 0 1/3 2*sqrt(2)/3; 0 2*sqrt(2)/3 -1/3],PermutationOperator(d,[1,2,4,3]));
+perm24to=kron([1/2 1/(2*sqrt(3)) sqrt(2)/sqrt(3);1/(2*sqrt(3)) 5/6 -sqrt(2)/3; sqrt(2)/sqrt(3) -sqrt(2)/3 -1/3],PermutationOperator(d,[1,4,3,2]));
+perm234to=kron([1/2 1/(2*sqrt(3)) sqrt(2)/sqrt(3);sqrt(3)/2 -1/6 -sqrt(2)/3; 0 2*sqrt(2)/3 -1/3],PermutationOperator(d,[1,4,2,3]));
+perm243to=kron([1/2 sqrt(3)/2 0;1/(2*sqrt(3)) -1/6 2*sqrt(2)/3; sqrt(2)/sqrt(3) -sqrt(2)/3 -1/3],PermutationOperator(d,[1,3,4,2]));
+
+twP3rec=(1/6)*(perm0rec+perm23rec+perm34rec+perm24rec+perm234rec+perm243rec);
+
+twP3to=(1/6)*(perm0to+perm23to+perm34to+perm24to+perm234to+perm243to);
+
+tX3rec=twP3rec*X3rec*ctranspose(twP3rec);
+
+tX3to=twP3to*X3to*ctranspose(twP3to);
+
+min(real(eig(tX3rec)))
+min(real(eig(tX3to)))
